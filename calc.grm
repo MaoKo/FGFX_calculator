@@ -1,0 +1,37 @@
+$EXTERN
+{
+	'calc.lex.h',
+};
+
+$PRODUCTION
+{
+	<LineExp>	->	<LineExp> <E> NL
+				|	<E> NL
+				;
+
+	<E>			->	<E> '+' <E>
+				|	<E> '-' <E>
+				|	<E> '*' <E>
+				|	<E> '/' <E>
+				|	<E> '%'	<E>
+				|	'(' <E> ')'
+				|	NUM
+				;
+};
+
+$PRECEDENCE
+{
+	$NONASSOC	( '+', '-'		,),
+	$NONASSOC	( '*', '/', '%'	,),
+};
+
+$ALIAS
+{
+	(PLUS	=> '+'),
+	(MINUS	=> '-'),
+	(MUL	=> '*'),
+	(DIV	=> '/'),
+	(MOD	=> '%'),
+	(LPAREN	=> '('),
+	(RPAREN	=> ')'),
+};

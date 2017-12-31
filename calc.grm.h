@@ -1,0 +1,125 @@
+#ifndef _CALC_GRM_H_
+#define _CALC_GRM_H_
+
+#define _ONLY_TOKEN_	
+#include "calc.lex.h"
+#undef	_ONLY_TOKEN_
+
+enum {
+	N_LineExp,
+	N_E,
+};
+
+#define TOTAL_NTER	2
+
+enum {
+	P_LHS_NLineExp_RHS_NLineExp_NE_TNL,
+	P_LHS_NLineExp_RHS_NE_TNL,
+	P_LHS_NE_RHS_NE_TPLUS_NE,
+	P_LHS_NE_RHS_NE_TMINUS_NE,
+	P_LHS_NE_RHS_NE_TMUL_NE,
+	P_LHS_NE_RHS_NE_TDIV_NE,
+	P_LHS_NE_RHS_NE_TMOD_NE,
+	P_LHS_NE_RHS_TLPAREN_NE_TRPAREN,
+	P_LHS_NE_RHS_TNUM,
+};
+
+#define TOTAL_PROD	10
+
+static int
+calc_rhs_prod_table[TOTAL_PROD] = {
+	[P_LHS_NLineExp_RHS_NLineExp_NE_TNL] = 3,
+	[P_LHS_NLineExp_RHS_NE_TNL] = 2,
+	[P_LHS_NE_RHS_NE_TPLUS_NE] = 3,
+	[P_LHS_NE_RHS_NE_TMINUS_NE] = 3,
+	[P_LHS_NE_RHS_NE_TMUL_NE] = 3,
+	[P_LHS_NE_RHS_NE_TDIV_NE] = 3,
+	[P_LHS_NE_RHS_NE_TMOD_NE] = 3,
+	[P_LHS_NE_RHS_TLPAREN_NE_TRPAREN] = 3,
+	[P_LHS_NE_RHS_TNUM] = 1,
+};
+
+static int
+calc_lhs_prod_table[TOTAL_PROD] = {
+	[P_LHS_NLineExp_RHS_NLineExp_NE_TNL] = N_LineExp,
+	[P_LHS_NLineExp_RHS_NE_TNL] = N_LineExp,
+	[P_LHS_NE_RHS_NE_TPLUS_NE] = N_E,
+	[P_LHS_NE_RHS_NE_TMINUS_NE] = N_E,
+	[P_LHS_NE_RHS_NE_TMUL_NE] = N_E,
+	[P_LHS_NE_RHS_NE_TDIV_NE] = N_E,
+	[P_LHS_NE_RHS_NE_TMOD_NE] = N_E,
+	[P_LHS_NE_RHS_TLPAREN_NE_TRPAREN] = N_E,
+	[P_LHS_NE_RHS_TNUM] = N_E,
+};
+
+#define ERROR_SLOT	0
+#define START_SYMBOL	N_LineExp
+
+enum {
+	_SHIFT	= 0x1000,
+	_REDUCE	= 0x2000,
+	_GOTO	= 0x4000,
+};
+
+#define SHIFT(x)	(x | _SHIFT)
+#define REDUCE(x)	(x | _REDUCE)
+#define GOTO(x)	(x | _GOTO)
+#define ACCEPT	(~0)
+
+#define LR_START_STATE	0
+
+static int
+calc_lr_action_table[20][TOTAL_TOKEN] = {
+/*   0 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*   1 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3), [T_EOF]=ACCEPT,},
+/*   2 */	{[T_MOD]=SHIFT(11), [T_DIV]=SHIFT(10), [T_MUL]=SHIFT(9), [T_MINUS]=SHIFT(8), [T_PLUS]=SHIFT(7), [T_NL]=SHIFT(6)},
+/*   3 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*   4 */	{[T_RPAREN]=REDUCE(P_LHS_NE_RHS_TNUM), [T_MOD]=REDUCE(P_LHS_NE_RHS_TNUM), [T_DIV]=REDUCE(P_LHS_NE_RHS_TNUM), [T_MUL]=REDUCE(P_LHS_NE_RHS_TNUM), [T_MINUS]=REDUCE(P_LHS_NE_RHS_TNUM), [T_PLUS]=REDUCE(P_LHS_NE_RHS_TNUM), [T_NL]=REDUCE(P_LHS_NE_RHS_TNUM)},
+/*   5 */	{[T_MOD]=SHIFT(11), [T_DIV]=SHIFT(10), [T_MUL]=SHIFT(9), [T_MINUS]=SHIFT(8), [T_PLUS]=SHIFT(7), [T_RPAREN]=SHIFT(19)},
+/*   6 */	{[T_EOF]=REDUCE(P_LHS_NLineExp_RHS_NE_TNL), [T_LPAREN]=REDUCE(P_LHS_NLineExp_RHS_NE_TNL), [T_NUM]=REDUCE(P_LHS_NLineExp_RHS_NE_TNL)},
+/*   7 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*   8 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*   9 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*  10 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*  11 */	{[T_NUM]=SHIFT(4), [T_LPAREN]=SHIFT(3)},
+/*  12 */	{[T_NL]=SHIFT(13), [T_MOD]=SHIFT(11), [T_DIV]=SHIFT(10), [T_MUL]=SHIFT(9), [T_MINUS]=SHIFT(8), [T_PLUS]=SHIFT(7)},
+/*  13 */	{[T_EOF]=REDUCE(P_LHS_NLineExp_RHS_NLineExp_NE_TNL), [T_LPAREN]=REDUCE(P_LHS_NLineExp_RHS_NLineExp_NE_TNL), [T_NUM]=REDUCE(P_LHS_NLineExp_RHS_NLineExp_NE_TNL)},
+/*  14 */	{[T_RPAREN]=REDUCE(P_LHS_NE_RHS_NE_TMOD_NE), [T_MINUS]=REDUCE(P_LHS_NE_RHS_NE_TMOD_NE), [T_PLUS]=REDUCE(P_LHS_NE_RHS_NE_TMOD_NE), [T_NL]=REDUCE(P_LHS_NE_RHS_NE_TMOD_NE)},
+/*  15 */	{[T_RPAREN]=REDUCE(P_LHS_NE_RHS_NE_TDIV_NE), [T_MINUS]=REDUCE(P_LHS_NE_RHS_NE_TDIV_NE), [T_PLUS]=REDUCE(P_LHS_NE_RHS_NE_TDIV_NE), [T_NL]=REDUCE(P_LHS_NE_RHS_NE_TDIV_NE)},
+/*  16 */	{[T_RPAREN]=REDUCE(P_LHS_NE_RHS_NE_TMUL_NE), [T_MINUS]=REDUCE(P_LHS_NE_RHS_NE_TMUL_NE), [T_PLUS]=REDUCE(P_LHS_NE_RHS_NE_TMUL_NE), [T_NL]=REDUCE(P_LHS_NE_RHS_NE_TMUL_NE)},
+/*  17 */	{[T_MOD]=SHIFT(11), [T_DIV]=SHIFT(10), [T_MUL]=SHIFT(9), [T_RPAREN]=REDUCE(P_LHS_NE_RHS_NE_TMINUS_NE), [T_NL]=REDUCE(P_LHS_NE_RHS_NE_TMINUS_NE)},
+/*  18 */	{[T_MOD]=SHIFT(11), [T_DIV]=SHIFT(10), [T_MUL]=SHIFT(9), [T_RPAREN]=REDUCE(P_LHS_NE_RHS_NE_TPLUS_NE), [T_NL]=REDUCE(P_LHS_NE_RHS_NE_TPLUS_NE)},
+/*  19 */	{[T_RPAREN]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN), [T_MOD]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN), [T_DIV]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN), [T_MUL]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN), [T_MINUS]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN), [T_PLUS]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN), [T_NL]=REDUCE(P_LHS_NE_RHS_TLPAREN_NE_TRPAREN)},
+};
+
+static int
+calc_lr_goto_table[20][TOTAL_NTER] = {
+/*   0 */	{[N_E]=GOTO(2), [N_LineExp]=GOTO(1)},
+/*   1 */	{[N_E]=GOTO(12)},
+/*   2 */	{},
+/*   3 */	{[N_E]=GOTO(5)},
+/*   4 */	{},
+/*   5 */	{},
+/*   6 */	{},
+/*   7 */	{[N_E]=GOTO(18)},
+/*   8 */	{[N_E]=GOTO(17)},
+/*   9 */	{[N_E]=GOTO(16)},
+/*  10 */	{[N_E]=GOTO(15)},
+/*  11 */	{[N_E]=GOTO(14)},
+/*  12 */	{},
+/*  13 */	{},
+/*  14 */	{},
+/*  15 */	{},
+/*  16 */	{},
+/*  17 */	{},
+/*  18 */	{},
+/*  19 */	{},
+};
+
+static int
+calc_sync_token[TOTAL_NTER][8] = {
+	[N_LineExp] = { T_NUM, T_LPAREN, T_EOF, -1 },
+	[N_E] = { T_NL, T_PLUS, T_MINUS, T_MUL, T_DIV, T_MOD, T_RPAREN, -1 },
+};
+
+#endif /* _CALC_GRM_H_ */
