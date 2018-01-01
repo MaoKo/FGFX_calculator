@@ -14,13 +14,15 @@ enum {
 	T_LPAREN,
 	T_RPAREN,
 	T_NL,
+	T_EQUAL,
 	T_NUM,
+	T_ID,
 	T_SPACE,
 	T_ERROR,
 	T_EOF,
 };
 
-#define TOTAL_TOKEN	12
+#define TOTAL_TOKEN	14
 
 #ifndef _ONLY_TOKEN_
 
@@ -28,9 +30,9 @@ enum {
 #define DEAD_STATE	0
 
 static dfa_state_t
-calc_state_table[12][256] = {
+calc_state_table[14][256] = {
 /*   0 */	{},
-/*   1 */	{[48 ... 57]=11, [47]=10, [45]=9, [43]=8, [42]=7, [41]=6, [40]=5, [37]=4, [32]=2, [10]=3, [9]=2},
+/*   1 */	{[97 ... 122]=13, [65 ... 90]=13, [61]=12, [48 ... 57]=11, [47]=10, [45]=9, [43]=8, [42]=7, [41]=6, [40]=5, [37]=4, [32]=2, [10]=3, [9]=2},
 /*   2 */	{[32]=2, [9]=2},
 /*   3 */	{},
 /*   4 */	{},
@@ -41,9 +43,11 @@ calc_state_table[12][256] = {
 /*   9 */	{},
 /*  10 */	{},
 /*  11 */	{[48 ... 57]=11},
+/*  12 */	{},
+/*  13 */	{[97 ... 122]=13, [65 ... 90]=13},
 };
 
-#define SIZE_FINAL_TAB	10
+#define SIZE_FINAL_TAB	12
 
 static final_state_t
 calc_final_table[SIZE_FINAL_TAB][2] = {
@@ -57,6 +61,8 @@ calc_final_table[SIZE_FINAL_TAB][2] = {
 	{ 9, 	T_MINUS },
 	{ 10, 	T_DIV },
 	{ 11, 	T_NUM },
+	{ 12, 	T_EQUAL },
+	{ 13, 	T_ID },
 };
 
 static int

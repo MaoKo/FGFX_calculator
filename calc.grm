@@ -15,14 +15,17 @@ $PRODUCTION
 				|	<E> '/' <E>
 				|	<E> '%'	<E>
 				|	'(' <E> ')'
+				|	ID '=' <E>
 				|	NUM
+				|	ID
 				;
 };
 
 $PRECEDENCE
 {
-	$NONASSOC	( '+', '-'		,),
-	$NONASSOC	( '*', '/', '%'	,),
+	$RIGHT	( '='			,),
+	$LEFT	( '+', '-'		,),
+	$LEFT	( '*', '/', '%'	,),
 };
 
 $ALIAS
@@ -34,4 +37,5 @@ $ALIAS
 	(MOD	=> '%'),
 	(LPAREN	=> '('),
 	(RPAREN	=> ')'),
+	(EQUAL	=> '='),
 };
