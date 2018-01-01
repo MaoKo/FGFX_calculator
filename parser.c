@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "parser.h"
 #include "lexer.h"
@@ -67,7 +68,6 @@ lr_parser(int filde) {
 					tmp_val = crt_entry->value;
 					break;
 
-				case P_LHS_NLineExp_RHS_NLineExp_NE_TNL:
 				case P_LHS_NLineExp_RHS_NE_TNL:
 					printf("== %d\n", value_stack[value_top - 2]);
 					break;
@@ -97,7 +97,6 @@ lr_parser(int filde) {
 					tmp_val = value_stack[value_top - 3] % tmp_val;
 					break;
 
-/*
 				case P_LHS_NE_RHS_NE_TEXPO_NE:
 					tmp_val = pow(value_stack[value_top - 3], tmp_val); break;
 
@@ -106,10 +105,12 @@ lr_parser(int filde) {
 
 				case P_LHS_NE_RHS_TMINUS_NE:
 					tmp_val = - tmp_val; break;
-*/
 
 				case P_LHS_NE_RHS_TLPAREN_NE_TRPAREN:
 						tmp_val = value_stack[value_top - 2]; break;
+
+				case P_LHS_NE_RHS_TLPAREN_TERROR_TRPAREN:
+						fprintf(stderr, "Error within subexpr.\n"); break;
 
 				case P_LHS_NE_RHS_TID:
 					crt_entry = entry_at(symbol_table, tmp_val);
@@ -126,6 +127,27 @@ lr_parser(int filde) {
 		}
 		else {
 			fprintf(stderr, "error with the token %d.\n", crt_token);
+	
+			int error_accept = ERROR_SLOT;
+			while (parse_top >= 0) {
+				int top_state = parse_stack[parse_top];
+				if ((error_accept = calc_lr_action_table[top_state][T_ERROR])
+								& _SHIFT) {
+					parse_stack[++parse_top] = error_accept ^ _SHIFT;
+					break;
+				}
+				--parse_top;
+			}
+
+			if (error_accept != ERROR_SLOT) {
+				error_accept ^= _SHIFT;
+				while (peek_token(filde) != T_EOF && (calc_lr_action_table
+						[error_accept][peek_token(filde)] == ERROR_SLOT))
+					{ advance(filde); }
+
+				if (peek_token(filde) != T_EOF)
+					{ continue; }
+			}
 			return (EXIT_FAILURE);
 		}
 	}

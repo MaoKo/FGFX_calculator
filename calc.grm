@@ -5,8 +5,12 @@ $EXTERN
 
 $PRODUCTION
 {
-	<LineExp>	->	<LineExp> <E> NL
-				|	<E> NL
+	<Stmt>	->	<Stmt> <LineExp>
+			|	<LineExp>
+			;
+
+	<LineExp>	->	<E> NL
+				|	ERROR NL 
 				;
 
 	<E>			->	<E> '+' <E>
@@ -14,8 +18,12 @@ $PRODUCTION
 				|	<E> '*' <E>
 				|	<E> '/' <E>
 				|	<E> '%'	<E>
+				|	<E> '^' <E>
 				|	'(' <E> ')'
+				|	'(' ERROR ')'
 				|	ID '=' <E>
+				|	'-' <E>		( $MIMIC UNARY )
+				|	'+' <E>		( $MIMIC UNARY )
 				|	NUM
 				|	ID
 				;
@@ -26,6 +34,8 @@ $PRECEDENCE
 	$RIGHT	( '='			,),
 	$LEFT	( '+', '-'		,),
 	$LEFT	( '*', '/', '%'	,),
+	$RIGHT	( '^'			,),
+	$LEFT	( UNARY			,),
 };
 
 $ALIAS
@@ -35,6 +45,7 @@ $ALIAS
 	(MUL	=> '*'),
 	(DIV	=> '/'),
 	(MOD	=> '%'),
+	(EXPO	=> '^'),
 	(LPAREN	=> '('),
 	(RPAREN	=> ')'),
 	(EQUAL	=> '='),

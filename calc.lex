@@ -5,6 +5,7 @@ $TOKEN
 	MUL		= / "*"       / ;
 	DIV		= / \/        / ;
 	MOD		= /  %        / ;
+	EXPO	= /  ^        / ;
 	LPAREN	= / "("       / ;
 	RPAREN	= / ")"       / ;
 	NL		= / \n        / ;

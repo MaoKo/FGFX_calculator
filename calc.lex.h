@@ -11,6 +11,7 @@ enum {
 	T_MUL,
 	T_DIV,
 	T_MOD,
+	T_EXPO,
 	T_LPAREN,
 	T_RPAREN,
 	T_NL,
@@ -22,7 +23,7 @@ enum {
 	T_EOF,
 };
 
-#define TOTAL_TOKEN	14
+#define TOTAL_TOKEN	15
 
 #ifndef _ONLY_TOKEN_
 
@@ -30,9 +31,9 @@ enum {
 #define DEAD_STATE	0
 
 static dfa_state_t
-calc_state_table[14][256] = {
+calc_state_table[15][256] = {
 /*   0 */	{},
-/*   1 */	{[97 ... 122]=13, [65 ... 90]=13, [61]=12, [48 ... 57]=11, [47]=10, [45]=9, [43]=8, [42]=7, [41]=6, [40]=5, [37]=4, [32]=2, [10]=3, [9]=2},
+/*   1 */	{[97 ... 122]=13, [94]=14, [65 ... 90]=13, [61]=12, [48 ... 57]=11, [47]=10, [45]=9, [43]=8, [42]=7, [41]=6, [40]=5, [37]=4, [32]=2, [10]=3, [9]=2},
 /*   2 */	{[32]=2, [9]=2},
 /*   3 */	{},
 /*   4 */	{},
@@ -45,9 +46,10 @@ calc_state_table[14][256] = {
 /*  11 */	{[48 ... 57]=11},
 /*  12 */	{},
 /*  13 */	{[97 ... 122]=13, [65 ... 90]=13},
+/*  14 */	{},
 };
 
-#define SIZE_FINAL_TAB	12
+#define SIZE_FINAL_TAB	13
 
 static final_state_t
 calc_final_table[SIZE_FINAL_TAB][2] = {
@@ -63,6 +65,7 @@ calc_final_table[SIZE_FINAL_TAB][2] = {
 	{ 11, 	T_NUM },
 	{ 12, 	T_EQUAL },
 	{ 13, 	T_ID },
+	{ 14, 	T_EXPO },
 };
 
 static int
